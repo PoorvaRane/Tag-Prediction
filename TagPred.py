@@ -300,11 +300,12 @@ def create_post_frame(pos_tag_list, tag_column):
 
 # In[34]:
 t = set_of_tags(p[4])
-b =  BIC(t,p[3],p[4])
-o = open('bic.txt','w')
-o.write(str(b))
-o.close()
-# t
+# b =  BIC(t,p[3],p[4])
+# o = open('bic.txt','w')
+# o.write(str(b))
+# o.close()
+print t
+print type(p[4])
 
 
 # In[20]:

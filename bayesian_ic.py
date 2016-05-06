@@ -54,3 +54,47 @@ def BIC(set_tags, posts, tags):
 
         tag_dict[label] = vocab_dict
     return tag_dict
+
+def BIC_2(set_tags, posts, tags):
+    tag_dict = {}
+    corpus = []
+    labels = []
+    labelset = []
+    for post in posts:
+        row_p = []
+        for p in post:
+            # p_u = unicode(p, "utf-8")
+            row_p.append(p)
+        corpus.append(row_p)
+    for tag in tags:
+        row_t = []
+        for t in tag:
+            # t_u = unicode(t, "utf-8")
+            row_t.append(t)
+        labels.append(row_t)
+    for st in set_tags:
+        # st_u = unicode(st, "utf-8")
+        labelset.append(st)
+    llda = LLDA(options.K, options.alpha, options.beta)
+    llda.set_corpus(labelset, corpus, labels)
+
+    for i in range(options.iteration):
+        sys.stderr.write("-- %d : %.4f\n" % (i, llda.perplexity()))
+        llda.inference()
+    print "perplexity : %.4f" % llda.perplexity()
+
+    phi = llda.phi()
+    for k, label in enumerate(set_tags):
+        print "\n-- label %d : %s" % (k, label)
+        vocab_dict = {}
+        for w in numpy.argsort(-phi[k])[:20]:
+            print "%s: %.4f" % (llda.vocas[w], phi[k,w])
+
+            vocab_dict[llda.vocas[w]] = phi[k,w]
+        for ind in range(len(label)):
+            if ind == 0:
+                st = label[ind]
+            else:
+                st = st + " " + label[ind]
+        tag_dict[st] = vocab_dict
+    return tag_dict
